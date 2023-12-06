@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-router@3"></script>
+    <title>Prolat</title>
+    <style>
+      body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    min-height: 100vh;
+    box-sizing: border-box;
+    color: #333; /* Default text color */
+}
+
+header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+    color: white; /* Set color to white */
+    text-decoration: none; /* Remove underline */
+    cursor: pointer;
+}
+
+.sell-button {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none; /* Remove underline */
+}
+
+.sell-button:hover {
+    background-color: #45a049;
+}
+
+.main {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f4f4f4; /* Light grey background */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.5s ease-out;
+}
+
+/* Apply the white sheet effect to items-container and sell-form-container */
+.items-container,
+.sell-form-container {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.items-container .item {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.items-container .item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.empty-message {
+    text-align: center;
+    color: #888;
+    font-size: 1.2em; /* Adjust font size */
+    margin-top: 20px; /* Add some space at the top */
+}
+
+footer {
+    text-align: center;
+    padding: 1em;
+    background-color: #333;
+    color: white;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+  </style>
+</head>
+<body>
+
+<div id="app">
+    <header>
+        <router-link to="/"><h1>Prolat</h1></router-link>
+        <router-link to="/sell" class="sell-button">Sell</router-link>
+    </header>
+
+    <main>
+      <!-- Items and Sell Form Container -->
+      <div class="items-container">
+          <div class="item">
+              <h2>Item Name 1</h2>
+              <p>Description of the item goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+              <img src="item1.jpg" alt="Item 1">
+          </div>
+  
+          <div class="item">
+              <h2>Item Name 2</h2>
+              <p>Description of the item goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+              <img src="item2.jpg" alt="Item 2">
+          </div>
+  
+          <!-- More items can be added here -->
+          <div class="items-container">
+            <!-- ... -->
+          </div>
+          <!-- Sell Form Container -->
+          <div class="sell-form-container">
+              <h2>Sell Item Form</h2>
+              <form>
+                  <!-- Your selling form content goes here -->
+                  <!-- Example: Item name, description, image upload, etc. -->
+                  <label for="itemName">Item Name:</label>
+                  <input type="text" id="itemName" name="itemName" required>
+  
+                  <label for="itemDescription">Item Description:</label>
+                  <textarea id="itemDescription" name="itemDescription" required></textarea>
+  
+                  <label for="itemImage">Item Image:</label>
+                  <input type="file" id="itemImage" name="itemImage" accept="image/*" required>
+  
+                  <button type="submit">Submit</button>
+              </form>
+          </div>
+      </div>
+  </main>
+
+    <footer>
+        <p>&copy; 2023 Prolat</p>
+    </footer>
+</div>
+
+<template>
+  <div>
+    <h2>Sell Item Form</h2>
+
+    <label for="itemName">Item Name:</label>
+    <input type="text" v-model="itemName" required>
+
+    <label for="itemDescription">Item Description:</label>
+    <textarea v-model="itemDescription" required></textarea>
+
+    <label for="itemImage">Item Image:</label>
+    <input type="file" id="itemImage" @change="handleImageUpload" accept="image/*" required>
+
+    <!-- Preview for the original image (max size: 500x500) -->
+    <div class="image-preview" v-if="previewImageOriginal">
+      <label>Preview (Max 500x500):</label>
+      <img :src="previewImageOriginal" alt="Preview">
+    </div>
+
+    <!-- Preview for the small image (max size: 100x100) -->
+    <div class="image-preview" v-if="previewImageSmall">
+      <label>Preview (Max 100x100):</label>
+      <img :src="previewImageSmall" alt="Preview">
+    </div>
+
+    <label for="email">Email:</label>
+    <input type="email" v-model="email" required>
+
+    <label for="phone">Phone:</label>
+    <input type="tel" v-model="phone" required>
+
+    <label for="address">Address:</label>
+    <textarea v-model="address" required></textarea>
+
+    <button @click="submitForm" type="submit">Submit</button>
+  </div>
+</template>
+
+<script>
+var Sell = {
+  data() {
+    return {
+      itemName: '',
+      itemDescription: '',
+      itemImage: null,
+      previewImageOriginal: null,
+      previewImageSmall: null,
+      email: '',
+      phone: '',
+      address: '',
+    };
+  },
+  methods: {
+    handleImageUpload(event) {
+  const file = event.target.files[0];
+
+  if (file) {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const img = new Image();
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set the maximum dimensions for the preview
+        const maxWidth = 500;
+        const maxHeight = 500;
+
+        let newWidth = img.width;
+        let newHeight = img.height;
+
+        // Calculate new dimensions while maintaining aspect ratio
+        if (newWidth > maxWidth || newHeight > maxHeight) {
+          const aspectRatio = newWidth / newHeight;
+
+          if (newWidth > maxWidth) {
+            newWidth = maxWidth;
+            newHeight = newWidth / aspectRatio;
+          }
+
+          if (newHeight > maxHeight) {
+            newHeight = maxHeight;
+            newWidth = newHeight * aspectRatio;
+          }
+        }
+
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+
+        ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+        // Display the resized image in the preview
+        const previewImage = canvas.toDataURL('image/jpeg');
+        this.previewImage = previewImage;
+      };
+
+      img.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+  }
+},
+    resizeImage(file, maxWidth, maxHeight, callback) {
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+
+  reader.onload = (event) => {
+    const img = new Image();
+    img.src = event.target.result;
+
+    img.onload = () => {
+      let newWidth = img.width;
+      let newHeight = img.height;
+
+      // Calculate new dimensions while maintaining aspect ratio
+      if (newWidth > maxWidth || newHeight > maxHeight) {
+        const aspectRatio = newWidth / newHeight;
+
+        if (newWidth > maxWidth) {
+          newWidth = maxWidth;
+          newHeight = newWidth / aspectRatio;
+        }
+
+        if (newHeight > maxHeight) {
+          newHeight = maxHeight;
+          newWidth = newHeight * aspectRatio;
+        }
+      }
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+
+      ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+      // Convert the canvas content to a blob and pass it to the callback
+      canvas.toBlob((blob) => {
+        callback(blob);
+      }, 'image/jpeg');
+    };
+  };
+},
+    submitForm() {
+      // Implement your form submission logic here
+      console.log('Item Name:', this.itemName);
+      console.log('Item Description:', this.itemDescription);
+      console.log('Item Image:', this.itemImage);
+      console.log('Email:', this.email);
+      console.log('Phone:', this.phone);
+      console.log('Address:', this.address);
+    },
+  },
+  template: `
+    <div>
+      <h2>Sell Item Form</h2>
+      <label for="itemName">Item Name:</label>
+      <input type="text" v-model="itemName" required>
+      <label for="itemDescription">Item Description:</label>
+      <textarea v-model="itemDescription" required></textarea>
+      <label for="itemImage">Item Image:</label>
+      <input type="file" id="itemImage" @change="handleImageUpload" accept="image/*" required>
+
+      <!-- Preview for the original image (max size: 500x500) -->
+      <div class="image-preview" v-if="previewImageOriginal">
+        <label>Preview (Max 500x500):</label>
+        <img :src="previewImageOriginal" alt="Preview">
+      </div>
+
+      <!-- Preview for the small image (max size: 100x100) -->
+      <div class="image-preview" v-if="previewImageSmall">
+        <label>Preview (Max 100x100):</label>
+        <img :src="previewImageSmall" alt="Preview">
+      </div>
+
+      <label for="email">Email:</label>
+      <input type="email" v-model="email" required>
+      <label for="phone">Phone:</label>
+      <input type="tel" v-model="phone" required>
+      <label for="address">Address:</label>
+      <textarea v-model="address" required></textarea>
+      <button @click="submitForm" type="submit">Submit</button>
+    </div>
+  `,
+};
+  </script>
+
+<style scoped>
+/* Add some styling for the form */
+form {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+.image-preview img {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.submit-button {
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.submit-button:hover {
+  background-color: #45a049;
+}
+</style>  
+
+<script defer>
+    // Placeholder component for the Marketplace
+    var Marketplace = {
+        template: '<div id="itemsContainer"><div class="empty-message">Currently, the marketplace is empty.</div></div>'
+    };
+
+    // Placeholder component for the Sell page
+    var Sell = {
+        data() {
+            return {
+                itemName: '',
+                itemDescription: '',
+                itemImage: null,
+                previewImage: null,
+                email: '',
+                phone: '',
+                address: ''
+            };
+        },
+        methods: {
+            handleImageUpload(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    this.itemImage = file;
+                    this.previewImage = URL.createObjectURL(file);
+                }
+            },
+            submitForm() {
+                // Implement your form submission logic here
+                console.log('Item Name:', this.itemName);
+                console.log('Item Description:', this.itemDescription);
+                console.log('Item Image:', this.itemImage);
+                console.log('Email:', this.email);
+                console.log('Phone:', this.phone);
+                console.log('Address:', this.address);
+            }
+        },
+        template: `
+            <div>
+                <h2>Sell Item Form</h2>
+                
+                <label for="itemName">Item Name:</label>
+                <input type="text" v-model="itemName" required>
+
+                <label for="itemDescription">Item Description:</label>
+                <textarea v-model="itemDescription" required></textarea>
+
+                <label for="itemImage">Item Image:</label>
+                <input type="file" id="itemImage" @change="handleImageUpload" accept="image/*" required>
+                <img v-if="previewImage" :src="previewImage" alt="Preview">
+
+                <label for="email">Email:</label>
+                <input type="email" v-model="email" required>
+
+                <label for="phone">Phone:</label>
+                <input type="tel" v-model="phone" required>
+
+                <label for="address">Address:</label>
+                <textarea v-model="address" required></textarea>
+
+                <button @click="submitForm" type="submit">Submit</button>
+            </div>
+        `
+    };
+
+    // Create a new Vue Router instance
+    var router = new VueRouter({
+        routes: [
+            { path: '/', component: Marketplace }, // Marketplace
+            { path: '/sell', component: Sell } // Sell page
+        ]
+    });
+
+    // Create a new Vue instance
+    var app = new Vue({
+        el: '#app', // Mount the app to the element with id="app"
+        router: router,
+        data: {
+            items: [] // You can load items dynamically if needed
+        },
+        template: `
+            <div>
+                <header>
+                    <router-link to="/"><h1>Prolat</h1></router-link>
+                    <router-link to="/sell" class="sell-button">Sell</router-link>
+                </header>
+
+                <router-view></router-view>
+
+                <footer>
+                    <p>&copy; 2023 Prolat</p>
+                </footer>
+            </div>
+        `
+    });
+</script>
+
+</body>
+</html>
