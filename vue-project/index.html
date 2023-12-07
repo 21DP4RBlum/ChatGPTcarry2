@@ -9,17 +9,17 @@
     <title>Prolat</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Arial;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
             min-height: 100vh;
             box-sizing: border-box;
             color: #333;
-            /* Default text color */
         }
 
         header {
+            font-family: Arial;
             background-color: #333;
             color: white;
             text-align: center;
@@ -30,6 +30,7 @@
         }
 
         header h1 {
+            font-family: Arial;
             margin: 0;
             color: white;
             text-decoration: none;
@@ -37,6 +38,7 @@
         }
 
         .sell-button {
+            font-family: Arial;
             padding: 10px;
             background-color: #4CAF50;
             color: white;
@@ -52,6 +54,7 @@
         }
 
         main {
+            font-family: Arial;
             max-width: 800px;
             margin: 20px auto;
             padding: 20px;
@@ -63,20 +66,22 @@
 
         .items-container,
         .sell-form-container {
+            font-family: Arial;
             background-color: #fff;
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
         }
         .item-details {
-    display: none;
-    margin-top: 10px;
-  }
+            display: none;
+            margin-top: 10px;
+        }
 
-  .item.expanded .item-details {
-    display: block;
-  }
+        .item.expanded .item-details {
+            display: block;
+        }
         .items-container .item {
+            font-family: Arial;
             border: 1px solid #ddd;
             padding: 20px;
             margin-bottom: 20px;
@@ -91,6 +96,7 @@
         }
 
         .empty-message {
+            font-family: Arial;
             text-align: center;
             color: #888;
             font-size: 1.2em;
@@ -98,6 +104,7 @@
         }
 
         footer {
+            font-family: Arial;
             text-align: center;
             padding: 1em;
             background-color: #333;
@@ -108,19 +115,20 @@
         }
 
         .sell-form-container {
+            font-family: Arial;
             max-width: 500px;
             margin: 0 auto;
             margin-bottom: 60px;
-            /* Adjust the bottom margin as needed */
         }
 
-        /* Add some styling for the form */
         form {
+            font-family: Arial;
             max-width: 100%;
             margin: 0 auto;
         }
 
         label {
+            font-family: Arial;
             display: block;
             margin-top: 10px;
             font-weight: bold;
@@ -128,6 +136,7 @@
 
         input,
         textarea {
+            font-family: Arial;
             width: 100%;
             padding: 8px;
             margin-top: 5px;
@@ -142,7 +151,6 @@
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
         }
 
-        /* Style the Choose File and Submit buttons */
         input[type="file"],
         .submit-button {
             display: none;
@@ -151,6 +159,7 @@
         .file-input,
         .choose-file-button,
         .submit-button {
+            font-family: Arial;
             padding: 10px;
             background-color: #4CAF50;
             color: white;
@@ -168,33 +177,26 @@
             background-color: #45a049;
         }
 
-        /* Additional style for the Submit button */
         .submit-button {
             position: relative;
             z-index: 1;
         }
 
-        /* Add a space for the fixed footer */
         main {
             padding-bottom: 80px;
         }
 
-        /* Add styling for the delete button */
         .delete-button {
             position: absolute;
             top: 10px;
             right: 10px;
             background-color: #ff5252;
-            /* Red background color */
             color: #fff;
-            /* White text color */
             border: none;
-            border-radius: 50%;
-            /* Make it round */
+            border-radius: 20%;
             padding: 8px;
-            /* Increase padding for a larger button */
             cursor: pointer;
-            font-size: 16px;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -226,9 +228,9 @@
             <p><strong>Address:</strong> {{ item.address }}</p>
           </div>
         </div>
-      </template>
+    </template>
 
-      <template id="item-list-template">
+    <template id="item-list-template">
         <div class="items-container">
           <div v-if="items.length === 0" class="empty-message">Currently, the marketplace is empty.</div>
           <div v-else>
@@ -238,24 +240,23 @@
             </div>
           </div>
         </div>
-      </template>
-      
+    </template>
 
     <script>
-Vue.component('item-card', {
-  props: ['item'],
-  data() {
-    return {
-      expanded: false,
-    };
-  },
-  methods: {
-    toggleExpand() {
-      this.expanded = !this.expanded;
-    },
-  },
-  template: '#item-card-template',
-});
+        Vue.component('item-card', {
+            props: ['item'],
+            data() {
+                return {
+                    expanded: false,
+                };
+            },
+            methods: {
+                toggleExpand() {
+                    this.expanded = !this.expanded;
+                },
+            },
+            template: '#item-card-template',
+        });
 
         Vue.component('item-list', {
             template: '#item-list-template',
@@ -265,7 +266,6 @@ Vue.component('item-card', {
                 };
             },
             mounted() {
-                // Retrieve items from local storage
                 const storedItems = JSON.parse(localStorage.getItem('items')) || [];
                 this.items = storedItems;
             },
@@ -277,9 +277,7 @@ Vue.component('item-card', {
                     }
                 },
                 deleteItem(index) {
-                    // Remove item from the array
                     this.items.splice(index, 1);
-                    // Update local storage
                     localStorage.setItem('items', JSON.stringify(this.items));
                 }
             }
@@ -288,11 +286,10 @@ Vue.component('item-card', {
         var Marketplace = {
             data() {
                 return {
-                    items: [] // You can load items dynamically if needed
+                    items: []
                 };
             },
             methods: {
-                // Add a method to open the modal with the selected item
                 viewItem(item) {
                     this.$root.openModal(item);
                 }
@@ -326,34 +323,20 @@ Vue.component('item-card', {
                     }
                 },
                 submitForm() {
-  // Check if an image is provided
-  //if (!this.itemImage) {
-    //alert('Please provide an image for the item.');
-    //return;
- // }
+                    const submittedItem = {
+                        name: this.itemName,
+                        description: this.itemDescription,
+                        email: this.email,
+                        phone: this.phone,
+                        address: this.address,
+                    };
 
-  // Create an object with the submitted data
-  const submittedItem = {
-    name: this.itemName,
-    description: this.itemDescription,
-    email: this.email,    // Include email
-    phone: this.phone,    // Include phone
-    address: this.address, // Include address
-    // Exclude the image for now
-  };
+                    const existingItems = JSON.parse(localStorage.getItem('items')) || [];
+                    existingItems.push(submittedItem);
+                    localStorage.setItem('items', JSON.stringify(existingItems));
 
-  // Get existing items from localStorage or initialize an empty array
-  const existingItems = JSON.parse(localStorage.getItem('items')) || [];
-
-  // Add the submitted item to the array
-  existingItems.push(submittedItem);
-
-  // Save the updated items back to localStorage
-  localStorage.setItem('items', JSON.stringify(existingItems));
-
-  // Use Vue Router to navigate back to the home page
-  this.$router.push('/');
-}
+                    this.$router.push('/');
+                }
             },
             template: `
                 <div class="sell-form-container">
@@ -389,7 +372,7 @@ Vue.component('item-card', {
         };
 
         var router = new VueRouter({
-            mode: 'history', // Use HTML5 history mode for cleaner URLs
+            mode: 'history',
             routes: [
                 { path: '/', component: Marketplace },
                 { path: '/sell', component: Sell }
@@ -401,8 +384,8 @@ Vue.component('item-card', {
             router: router,
             data: {
                 items: [],
-                modalItem: {}, // Add this line to define modalItem
-                modalOpen: false // New property to control modal visibility
+                modalItem: {},
+                modalOpen: false
             },
             methods: {
                 openModal(item) {
