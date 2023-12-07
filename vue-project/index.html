@@ -68,7 +68,14 @@
             padding: 20px;
             margin-bottom: 20px;
         }
+        .item-details {
+    display: none;
+    margin-top: 10px;
+  }
 
+  .item.expanded .item-details {
+    display: block;
+  }
         .items-container .item {
             border: 1px solid #ddd;
             padding: 20px;
@@ -211,36 +218,44 @@
 
     <template id="item-card-template">
         <div class="item-card">
-            <h2>{{ item.name }}</h2>
-            <p>{{ item.description }}</p>
-            <img :src="item.image" alt="Item Preview">
+          <h2 @click="toggleExpand">{{ item.name }}</h2>
+          <div v-if="expanded">
+            <p><strong>Description:</strong> {{ item.description }}</p>
+            <p><strong>Email:</strong> {{ item.email }}</p>
+            <p><strong>Phone:</strong> {{ item.phone }}</p>
+            <p><strong>Address:</strong> {{ item.address }}</p>
+          </div>
         </div>
-    </template>
+      </template>
 
-    <template id="item-list-template">
+      <template id="item-list-template">
         <div class="items-container">
-            <div v-if="items.length === 0" class="empty-message">Currently, the marketplace is empty.</div>
-            <div v-else>
-                <div v-for="(item, index) in items" :key="index" class="item">
-                    <button class="delete-button" @click="confirmDelete(index)">X</button>
-                    <h2>{{ item.name }}</h2>
-                    <p>{{ item.description }}</p>
-                </div>
+          <div v-if="items.length === 0" class="empty-message">Currently, the marketplace is empty.</div>
+          <div v-else>
+            <div v-for="(item, index) in items" :key="index" class="item">
+              <button class="delete-button" @click="confirmDelete(index)">X</button>
+              <item-card :item="item" />
             </div>
+          </div>
         </div>
-    </template>
+      </template>
+      
 
     <script>
-        Vue.component('item-card', {
-            props: ['item'],
-            template: '#item-card-template',
-            methods: {
-                // Emit a click event when the card is clicked
-                handleClick() {
-                    this.$emit('click', this.item);
-                }
-            }
-        });
+Vue.component('item-card', {
+  props: ['item'],
+  data() {
+    return {
+      expanded: false,
+    };
+  },
+  methods: {
+    toggleExpand() {
+      this.expanded = !this.expanded;
+    },
+  },
+  template: '#item-card-template',
+});
 
         Vue.component('item-list', {
             template: '#item-list-template',
@@ -311,31 +326,34 @@
                     }
                 },
                 submitForm() {
-                    // Check if an image is provided
-                    if (!this.itemImage) {
-                        alert('Please provide an image for the item.');
-                        return;
-                    }
+  // Check if an image is provided
+  //if (!this.itemImage) {
+    //alert('Please provide an image for the item.');
+    //return;
+ // }
 
-                    // Create an object with the submitted data
-                    const submittedItem = {
-                        name: this.itemName,
-                        description: this.itemDescription,
-                        // Exclude the image for now
-                    };
+  // Create an object with the submitted data
+  const submittedItem = {
+    name: this.itemName,
+    description: this.itemDescription,
+    email: this.email,    // Include email
+    phone: this.phone,    // Include phone
+    address: this.address, // Include address
+    // Exclude the image for now
+  };
 
-                    // Get existing items from localStorage or initialize an empty array
-                    const existingItems = JSON.parse(localStorage.getItem('items')) || [];
+  // Get existing items from localStorage or initialize an empty array
+  const existingItems = JSON.parse(localStorage.getItem('items')) || [];
 
-                    // Add the submitted item to the array
-                    existingItems.push(submittedItem);
+  // Add the submitted item to the array
+  existingItems.push(submittedItem);
 
-                    // Save the updated items back to localStorage
-                    localStorage.setItem('items', JSON.stringify(existingItems));
+  // Save the updated items back to localStorage
+  localStorage.setItem('items', JSON.stringify(existingItems));
 
-                    // Use Vue Router to navigate back to the home page
-                    this.$router.push('/');
-                }
+  // Use Vue Router to navigate back to the home page
+  this.$router.push('/');
+}
             },
             template: `
                 <div class="sell-form-container">
