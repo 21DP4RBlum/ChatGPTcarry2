@@ -8,6 +8,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "fs.promises": "^0.1.2",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
   },
